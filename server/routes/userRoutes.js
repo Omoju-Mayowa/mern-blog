@@ -2,12 +2,13 @@ import {Router} from 'express'
 import { sendResetOTP, resetPassword } from '../controllers/passwordResetController.js'
 import {registerUser, loginUser, getUser, changeAvatar, editUser, getAuthors, updateUserProfile} from '../controllers/userControllers.js'
 import verifyToken from '../middleware/authMiddleware.js'
+import { loginRateLimiter } from '../middleware/loginRateLimiter.js'
 
 const router = Router()
 //Unprotected Routes
 
 router.post('/register', registerUser)
-router.post('/login', loginUser)
+router.post('/login', loginRateLimiter, loginUser)
 router.get('/:id', getUser)
 router.get('/',  getAuthors)
 

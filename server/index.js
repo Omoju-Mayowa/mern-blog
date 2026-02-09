@@ -46,6 +46,10 @@ app.use((req, res, next) => {
   next();
 });
 
+// server/index.js (near app init)
+app.set('trust proxy', 1);
+
+
 // Use memory storage for file uploads (we send to R2 directly)
 app.use(fileUpload());
 

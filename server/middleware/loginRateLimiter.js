@@ -81,3 +81,17 @@ export {
   isIpWhitelisted,
   consumeIfNotWhitelisted
 };
+
+// Express middleware wrapper for login rate limiting
+export async function loginRateLimiter(req, res, next) {
+  try {
+    await consumeIfNotWhitelisted(req.ip);
+    return next();
+  } catch (rateLimiterRes) {
+    const retrySecs = Math.ceil((rateLimiterRes?.msBeforeNext || 0) / 1000);
+    res.set('Retry-After', String(retrySecs || 60));
+    return res.status(429).json({
+      message: `Too many login attempts. Try again in ${retrySecs || 60}s.`
+    });
+  }
+}
