@@ -9,7 +9,9 @@ API.interceptors.response.use(
     (error) => {
         console.log("INTERCEPTOR CAUGHT ERROR:", error.response?.status); // Add this!
 
-        if (error.response && error.response.status === 401) {
+        const isLoginRequest = error.config?.url?.includes('/users/login');
+
+        if (error.response && error.response.status === 401 && !isLoginRequest) {
             console.log("401 detected. Redirecting...");
             localStorage.clear(); // Use clear to be safe
             window.location.href = '/login?error=expired';
