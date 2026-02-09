@@ -881,6 +881,8 @@ button[type="submit"] {
 
   .create-post {
     width: 72%;
+    height: auto;
+    padding-bottom: 2rem;
   }  
   .post-detail {
     width: 100%;
