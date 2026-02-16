@@ -32,13 +32,13 @@ const Authors = () => {
       <div className="container authors__container">
         {authors.map((author) => (
           <Link key={author._id} to={`/profile/${author._id}`} className='author'>
-            <div className="author__avatar">
+            <motion.div className="author__avatar">
               <img 
                 src={getAvatarUrl(author.avatar)} 
                 alt={author.name} 
                 onError={(e) => { e.target.src = `${assetsBase}/mern/default-avatar.png` }}
               />
-            </div>
+            </motion.div>
             <div className="author__info">
               <h4>{author.name}</h4>
               <p>{author.posts || 0} posts</p>
