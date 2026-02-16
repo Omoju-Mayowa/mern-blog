@@ -26,8 +26,7 @@ async function parseFile(filePath) {
   } catch (err) {
     throw new Error('Failed to read file: ' + (err && err.message))
   }
-}
-
+  
 async function insertCategories(categoryList) {
   try {
     const conn = await connectToAvailableMongoDB()

@@ -14,6 +14,148 @@
 
 ---
 
+## Project Structure
+Directory Layout of the Application.
+```
+mern-cloud/
+├── FEATURES_IMPLEMENTED.md
+├── IMPLEMENTATION_CHECKLIST.md
+├── README.md
+├── categories.txt
+├── client/
+│   ├── index.html
+│   ├── package-lock.json
+│   ├── package.json
+│   ├── src/
+│   │   ├── app.css
+│   │   ├── index.css
+│   │   ├── main.jsx
+│   │   └── pages/
+│   │       ├── AuthorPosts.jsx
+│   │       ├── Authors.jsx
+│   │       ├── CreatePost.jsx
+│   │       ├── Dashboard.jsx
+│   │       ├── DeletePost.jsx
+│   │       ├── EditPost.jsx
+│   │       ├── ErrorPage.jsx
+│   │       ├── Home.jsx
+│   │       ├── Login.jsx
+│   │       ├── Logout.jsx
+│   │       ├── OTP.jsx
+│   │       ├── Popular.jsx
+│   │       ├── PostDetail.jsx
+│   │       ├── Register.jsx
+│   │       ├── Search.jsx
+│   │       ├── UserProfile.jsx
+│   │       ├── categoryPosts.jsx
+│   │       ├── changePassword.jsx
+│   │       ├── components/
+│   │       │   ├── CursorManager.jsx
+│   │       │   ├── Footer.jsx
+│   │       │   ├── Layout.jsx
+│   │       │   ├── LikeButton.jsx
+│   │       │   ├── Loader.jsx
+│   │       │   ├── MediaDisplay.jsx
+│   │       │   ├── NavBar.jsx
+│   │       │   ├── PostAuthor.jsx
+│   │       │   ├── PostItem.jsx
+│   │       │   ├── Posts.jsx
+│   │       │   ├── axios.js
+│   │       │   ├── context/
+│   │       │   ├── cursors/
+│   │       │   └── usePostStream.jsx
+│   │       ├── data.js
+│   │       ├── errorcss.css
+│   │       └── forgotPassword.jsx
+│   ├── vercel.json
+│   └── vite.config.js
+├── package-lock.json
+├── package.json
+├── pepper.txt
+└── server/
+    ├── Dockerfile
+    ├── README.Docker.md
+    ├── compose.yaml
+    ├── config/
+    │   └── peppers.json
+    ├── controllers/
+    │   ├── categoryController.js
+    │   ├── passwordResetController.js
+    │   ├── postControllers.js
+    │   └── userControllers.js
+    ├── dump.rdb
+    ├── index.js
+    ├── loaderio-1e56da91a7753638f3f7f8dcc590cc4f.txt
+    ├── middleware/
+    │   ├── authMiddleware.js
+    │   ├── errorMiddleware.js
+    │   └── loginRateLimiter.js
+    ├── models/
+    │   ├── categoryModel.js
+    │   ├── errorModel.js
+    │   ├── postModel.js
+    │   └── userModel.js
+    ├── package-lock.json
+    ├── package.json
+    ├── routes/
+    │   ├── categoryRoutes.js
+    │   ├── postRoutes.js
+    │   ├── upload.js
+    │   └── userRoutes.js
+    └── utils/
+        ├── addCategories.js
+        ├── addPepper.js
+        ├── db.js
+        ├── directory.js
+        ├── generateOTP.js
+        ├── pepper.txt
+        ├── peppers.js
+        ├── r2Client.js
+        └── sendEmail.js
+```
+
+---
+
+
+## Installation
+
+### Clone the repository
+```bash
+  git clone https://github.com/Omoju-Mayowa/mern-cloud.git
+```
+
+### Install the dependencies
+#### For root folder of the project
+```bash
+  cd mern-cloud
+  npm install
+```
+
+#### For client folder of the project
+```bash
+  cd client
+  npm install
+```
+
+#### For server folder of the project
+```bash
+  cd server
+  npm install
+```
+
+
+#### Disclaimer
+> The project is built to rely on internet serices like cloudflare, mongodb and redis.
+> Redis and mongodb have been developed to work offline if you have the tools installed and set-up but not cloudflare. The project has to be built and deployed properly to work as expected.
+> You also have to define your own Environmental Variables(.env in all relative paths that need it), variable names will be pre-defined but the values won't.
+
+
+
+
+
+---
+
+
 ## Important files & locations 🔍
 - Peppers file: `server/config/peppers.json` (newest pepper is index `0`).
 - Peppers utility: `server/utils/peppers.js`
