@@ -11,6 +11,7 @@ import { PutObjectCommand } from '@aws-sdk/client-s3';
 import { getPeppers, getCurrentPepper } from '../utils/peppers.js';
 import sendEmail from '../utils/sendEmail.js';
 import { shouldSendLoginAlert, resetLoginAlerts } from '../middleware/loginRateLimiter.js';
+import sendCookie from '../utils/sendCookie.js'
 
 const avatarSizeBytes = 10485760; 
 
