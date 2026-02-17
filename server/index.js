@@ -26,14 +26,7 @@ app.use(express.json({ extended: true }));
 app.use(express.urlencoded({ extended: true }));
 app.use(cookieParser())
 
-const allowedOrigins = [
-  process.env.SITE_LINK,
-  "https://mern-cloud.vercel.app/",
-  "https://mern-cloud-git-main-omoju-mayowas-projects.vercel.app/",
-  "https://mern-cloud-fyqsicu8g-omoju-mayowas-projects.vercel.app/",
-  "http://localhost:5173/"
-  // You can add more Origin URLs here if you cloned the repo.
-];
+const allowedOrigins =  process.env.SITE_LINK ? process.env.SITE_LINK.split(',') : []
 
 console.log(process.env.SITE_LINK)
 
