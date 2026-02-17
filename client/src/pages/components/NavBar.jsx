@@ -53,7 +53,7 @@ const Header = () => {
 
   const links = [
     {name: `${currentUser?.name}`, path: `/profile/${currentUser?.id}`},
-    {name: 'Dashboard', path: '/dashboard'},
+    {name: 'My Posts', path: '/dashboard'},
     {name: 'Create Post', path: '/create'},
     {name: 'Popular', path: '/popular'},
     {name: 'Search', path: '/search'},
