@@ -5,6 +5,13 @@ import { HiThumbUp } from 'react-icons/hi'
 import { UserContext } from './context/userContext'
 
 const LikeButton = ({ postID, initialLikesCount = 0, initialLikedBy = [] }) => {
+  const formatNumber = (num) => {
+    return new Intl.NumberFormat("en", {
+      notation: "compact",
+      compactDisplay: "short"
+    }).format(num)
+  }
+  
   const navigate = useNavigate()
   const { currentUser } = useContext(UserContext)
 
@@ -61,7 +68,7 @@ const LikeButton = ({ postID, initialLikesCount = 0, initialLikedBy = [] }) => {
       disabled={loading}
     >
       <span><HiThumbUp /></span>
-      <span className="like-count" aria-hidden="true">{count}</span>
+      <span className="like-count" aria-hidden="true">{formatNumber(count)}</span>
     </button>
   )
 }
