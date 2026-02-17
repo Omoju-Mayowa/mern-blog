@@ -171,7 +171,6 @@ export const loginUser = async (req, res, next) => {
         );
       
         res.status(200).json({ 
-            token, 
             id: user._id, 
             name: user.name,
             avatar: user.avatar 
