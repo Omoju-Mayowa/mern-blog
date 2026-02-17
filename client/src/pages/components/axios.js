@@ -6,19 +6,24 @@ const API = axios.create({
 });
 
 API.interceptors.response.use(
-    (response) => response, 
-    (error) => {
-        console.log("INTERCEPTOR CAUGHT ERROR:", error.response?.status); // Add this!
+  (response) => response,
+  (error) => {
+    console.log("INTERCEPTOR CAUGHT ERROR:", error.response?.status);
 
-        const isLoginRequest = error.config?.url?.includes('/users/login');
+    const isLoginRequest = error.config?.url?.includes('/users/login');
+    const isMeRequest = error.config?.url?.includes('/users/me');
 
-        if (error.response && error.response.status === 401 && !isLoginRequest) {
-            console.log("401 detected. Redirecting...");
-            localStorage.clear(); // Use clear to be safe
-            window.location.href = '/login?error=expired';
-        }
-        return Promise.reject(error);
+    if (
+      error.response?.status === 401 &&
+      !isLoginRequest &&
+      !isMeRequest
+    ) {
+      localStorage.removeItem("currentUser");
+      window.location.href = '/login?error=expired';
     }
+
+    return Promise.reject(error);
+  }
 );
 
 export default API;
