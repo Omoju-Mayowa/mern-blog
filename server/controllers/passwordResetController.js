@@ -6,6 +6,7 @@ import sendEmail from '../utils/sendEmail.js';
 import User from '../models/userModel.js';
 import crypto from 'crypto';
 import { getPeppers, getCurrentPepper } from '../utils/peppers.js'
+import { use } from 'react';
 
 // Consistent with your User Controller
 const argonOptionsStrong = {
@@ -124,9 +125,14 @@ const resetPassword = async (req, res, next) => {
       process.env.JWT_SECRET, 
       { expiresIn: '6h' }
     );
+    
+    sendCookie(res, token, 200, {
+      id: user._id,
+      name: user.name,
+      avatar: user.avatar
+    })
 
     return res.status(200).json({ 
-        token, 
         id: user._id, 
         name: user.name, 
         avatar: user.avatar // Added for frontend consistency

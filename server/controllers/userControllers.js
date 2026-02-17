@@ -169,14 +169,12 @@ export const loginUser = async (req, res, next) => {
             { expiresIn: '1d' }
         );
       
-        res.cookie("access_token", token, {
-          httpOnly: true,
-          secure: process.env.NODE_ENV === "production",
-          sameSite: "strict",
-          maxAge: 24 * 60 * 60 * 1000 // 1 day
-          
+        sendCookie(res, token, 200, {
+          id: user._id,
+          name: user.name,
+          avatar: user.avatar
         })
-
+    
         res.status(200).json({ 
             token, 
             id: user._id, 
