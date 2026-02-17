@@ -27,7 +27,7 @@ const Dashboard = () => {
 
   useEffect(() => {
     // If no user is logged in, redirect to login
-    if (!currentUser?.token) {
+    if (!currentUser?.id) {
       navigate('/login')
       return
     }
@@ -49,7 +49,7 @@ const Dashboard = () => {
     }
 
     fetchUserPosts()
-  }, [currentUser?.id, currentUser?.token, navigate])
+  }, [currentUser?.id, navigate])
 
   if (loading) return <Loader />
 
