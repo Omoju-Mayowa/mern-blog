@@ -5,8 +5,6 @@ import verifyToken from '../middleware/authMiddleware.js'
 import { loginRateLimiter } from '../middleware/loginRateLimiter.js'
 
 const router = Router()
-//Unprotected Routes
-
 // Unprotected
 router.post('/register', registerUser)
 router.post('/login', loginRateLimiter, loginUser)
