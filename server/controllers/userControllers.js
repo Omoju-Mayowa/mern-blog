@@ -168,6 +168,14 @@ export const loginUser = async (req, res, next) => {
             process.env.JWT_SECRET, 
             { expiresIn: '1d' }
         );
+      
+        res.cookie("access_token", token, {
+          httpOnly: true,
+          secure: process.env.NODE_ENV === "production",
+          sameSite: "strict",
+          maxAge: 24 * 60 * 60 * 1000 // 1 day
+          
+        })
 
         res.status(200).json({ 
             token, 
@@ -181,6 +189,16 @@ export const loginUser = async (req, res, next) => {
         return next(new HttpError('Login failed. Please try again later.', 500));
     }
 };
+
+export const me = async (req, res, next) => {
+  try {
+    const user = await User.findById(req.user._id).select('-password -pepperVersion')
+    if (!user) return next(new HttpError('Unauthorized.', 401))
+    res.json(user)
+  } catch(err) {
+    next(new HttpError("Failed to fetch user.", 500))
+  }
+}
 
 export const editUser = async (req, res, next) => {
     try {
@@ -256,3 +274,11 @@ export const getAuthors = async (req, res, next) => {
 };
 
 export const changeAvatar = updateUserProfile;
+
+export const logout = (req, res, next) => {
+  res.clearCookie('access_token', {
+    httpOnly: true,
+    secure: process.env.NODE_ENV === "production",
+    sameSite: "strict"
+  })
+}

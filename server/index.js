@@ -5,6 +5,7 @@ import "dotenv/config";
 import fileUpload from "express-fileupload";
 import helmet from "helmet";
 import { default as rateLimit } from "express-rate-limit";
+import cookieParser from "cookie-parser";
 
 import { connectToAvailableMongoDB } from "./utils/db.js";
 import __dirname from "./utils/directory.js";
@@ -23,6 +24,7 @@ app.set("trust proxy", 1);
 
 app.use(express.json({ extended: true }));
 app.use(express.urlencoded({ extended: true }));
+app.use(cookieParser())
 
 const allowedOrigins = [
   process.env.SITE_URL,
