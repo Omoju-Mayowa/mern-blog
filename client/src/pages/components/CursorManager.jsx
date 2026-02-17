@@ -29,16 +29,16 @@ const CursorManager = () => {
       }
     }
 
-    document.querySelector('#root').style.cursor = `url(${cursor})`;
+    document.querySelector('#root').style.cursor = `url(${cursor}), auto`;
 
     // Link Custom Cursors
-    const links = document.querySelectorAll('* a')
+    const links = document.querySelectorAll('a')
     links.forEach((link) => {
       link.style.cursor = `url(${linkCur}), pointer`
     })
     
     // Author's Custom Colors
-    const authors = document.querySelectorAll('* .author, * .post__author')
+    const authors = document.querySelectorAll('.author, .post__author')
     authors.forEach((author) => {
       author.style.cursor = `url(${authorCur}), pointer`
     })
@@ -50,7 +50,7 @@ const CursorManager = () => {
     })
 
     // Inputs, Textareas, Select Cursors
-    const buttons = document.querySelectorAll('* .btn, * .btn-primary')
+    const buttons = document.querySelectorAll('.btn, .btn-primary')
     buttons.forEach((button) => {
       button.style.cursor = `url(${linkCur}), pointer`
     })
