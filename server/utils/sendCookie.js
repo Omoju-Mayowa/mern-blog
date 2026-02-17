@@ -6,6 +6,7 @@ const sendCookie = (res, token, statusCode, message) => {
         httpOnly: true,
         secure: process.env.NODE_ENV === 'production',
         sameSite: process.env.NODE_ENV === 'production' ? 'none' : 'lax',
+        path: '/'
     };
 
     if (process.env.NODE_ENV === 'production') {
@@ -14,7 +15,7 @@ const sendCookie = (res, token, statusCode, message) => {
 
     res.cookie('access_token', token, options);
 
-    return res.status(statusCode).json({ user });
+    return res.status(statusCode).json(user);
 };
 
 

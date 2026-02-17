@@ -170,11 +170,11 @@ export const loginUser = async (req, res, next) => {
             { expiresIn: '1d' }
         );
       
-        res.status(200).json({ 
-            id: user._id, 
-            name: user.name,
-            avatar: user.avatar 
-        });
+        // res.status(200).json({ 
+        //     id: user._id, 
+        //     name: user.name,
+        //     avatar: user.avatar 
+        // });
 
         return sendCookie(res, token, 200, {
           id: user._id,
@@ -191,7 +191,7 @@ export const loginUser = async (req, res, next) => {
 
 export const me = async (req, res, next) => {
   try {
-    const user = await User.findById(req.user._id).select('-password -pepperVersion')
+    const user = await User.findById(req.user.id).select('-password -pepperVersion')
     if (!user) return next(new HttpError('Unauthorized.', 401))
     res.json(user)
   } catch(err) {
@@ -280,4 +280,5 @@ export const logout = (req, res, next) => {
     secure: process.env.NODE_ENV === "production",
     sameSite: "strict"
   })
+  res.status(200).json({ message: "Logged out" })
 }

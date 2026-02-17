@@ -26,21 +26,21 @@ app.use(express.json({ extended: true }));
 app.use(express.urlencoded({ extended: true }));
 app.use(cookieParser())
 
-const allowedOrigins =  process.env.SITE_LINK ? process.env.SITE_LINK.split(',') : []
+const normalize = (s="") => s.trim().replace(/\/$/, "")
+const allowedOrigins = (process.env.SITE_LINK || "")
+  .split(',')
+  .map(normalize)
+  .filter(Boolean)
 
-console.log(process.env.SITE_LINK)
-
-app.use(
-  cors({
-    origin: (origin, callback) => {
-      if (!origin) return callback(null, true);
-      if (allowedOrigins.includes(origin)) return callback(null, true);
-      return callback(new Error("CORS: Origin not allowed"));
-    },
-    credentials: true,
-    methods: ["GET", "POST", "PATCH", "DELETE"],
-  }),
-);
+app.use(cors({
+  origin: (origin, cb) => {
+    if (!origin) return cb(null, true);
+    if (allowedOrigins.includes(normalize(origin))) return cb(null, true);
+    return cb(null, false);
+  },
+  credentials: true,
+  methods: ["GET", "POST", "PATCH", "DELETE"]
+}));
 
 // Allow Authorization header in CORS preflight
 app.use((req, res, next) => {
