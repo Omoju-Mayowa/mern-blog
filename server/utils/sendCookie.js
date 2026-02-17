@@ -1,4 +1,4 @@
-export default sendCookie = (res, token, statusCode, message) => {
+const sendCookie = (res, token, statusCode, message) => {
     
     const days = Number(process.env.COOKIE_EXPIRE)
     const options = {
@@ -16,3 +16,6 @@ export default sendCookie = (res, token, statusCode, message) => {
 
     return res.status(statusCode).json({ message });
 };
+
+
+export { sendCookie }
