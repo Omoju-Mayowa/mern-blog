@@ -3,6 +3,7 @@ import { Link } from 'react-router-dom'
 import API from './components/axios.js'
 import usePostStream from './components/usePostStream'
 import Loader from './components/Loader'
+import { motion } from 'motion'
 
 const Authors = () => {
   const [authors, setAuthors] = useState([])
@@ -30,21 +31,26 @@ const Authors = () => {
     <section className="authors">
       <h1 className='container h1__center'>Our Authors</h1>
       <div className="container authors__container">
-        {authors.map((author) => (
-          <Link key={author._id} to={`/profile/${author._id}`} className='author'>
-            <motion.div className="author__avatar">
-              <img 
-                src={getAvatarUrl(author.avatar)} 
-                alt={author.name} 
-                onError={(e) => { e.target.src = `${assetsBase}/mern/default-avatar.png` }}
-              />
-            </motion.div>
-            <div className="author__info">
-              <h4>{author.name}</h4>
-              <p>{author.posts || 0} posts</p>
-            </div>
-          </Link>
-        ))}
+        {authors.map((author) => {
+          const authorId = author._id || author.id
+          if (!authorId) return null
+          
+          return (
+            <Link key={authorId} to={`/profile/${authorId}`} className='author'>
+              <motion.div className="author__avatar">
+                <img
+                  src={getAvatarUrl(author.avatar)}
+                  alt={author.name}
+                  onError={(e) => { e.target.src = `${assetsBase}/mern/default-avatar.png` }}
+                />
+              </motion.div>
+              <div className="author__info">
+                <h4>{author.name}</h4>
+                <p>{author.posts || 0} posts</p>
+              </div>
+            </Link>
+          )
+        })}
       </div>
     </section>
   )
