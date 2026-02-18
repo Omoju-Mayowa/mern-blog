@@ -12,7 +12,7 @@ const Authors = () => {
   useEffect(() => {
     const fetchAuthors = async () => {
       try {
-        const response = await API.get(`${import.meta.env.VITE_API_BASE_URL}/users`)
+        const response = await API.get(`/users`)
         setAuthors(Array.isArray(response.data) ? response.data : [])
       } finally { setLoading(false) }
     }
