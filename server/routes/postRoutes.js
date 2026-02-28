@@ -2,11 +2,12 @@ import {Router} from 'express'
 
 import { createPost, getPosts, getPost, getcategoryPosts, getUserPosts, editPost, deletePost, likePost, streamPosts } from '../controllers/postControllers.js'
 import verifyToken from '../middleware/authMiddleware.js'
+import { asyncHandler } from '../middleware/asyncHandler.js'
 
 
 const router = Router()
 
-router.post('/', verifyToken, createPost)   
+router.post('/', verifyToken, asyncHandler(createPost))   
 router.get('/stream', streamPosts)
 router.get('/', getPosts)
 router.get('/categories/:category', getcategoryPosts)

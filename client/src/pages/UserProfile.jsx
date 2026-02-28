@@ -161,7 +161,7 @@ const UserProfile = () => {
   }
 
   if (loading) return <section className="profile"><Loader /></section>
-  if (!userData) return <section className="profile"><div className="center"><p>User not found.</p></div></section>
+  if (!userData) return <section className="profile"><div className="center"><p className='form__error-message'>User not found.</p></div></section>
 
   return (
     <section className="profile">

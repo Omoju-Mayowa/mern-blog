@@ -26,6 +26,10 @@ app.use(express.json({ extended: true }));
 app.use(express.urlencoded({ extended: true }));
 app.use(cookieParser())
 
+app.use((err, req, res, next) => {
+  res.status(err.status || 500).json({ message: err.message })
+})
+
 const normalize = (s="") => s.trim().replace(/\/$/, "")
 const allowedOrigins = (process.env.SITE_LINK || "")
   .split(',')

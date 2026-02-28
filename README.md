@@ -318,6 +318,28 @@ V0id$echo::NULL_Δ47
 
 ---
 
+## Project Demo(Screenshots)
+![Homepage](location/images/home.png)
+![Dashboard](location/images/dashboard.png)
+
+---
+
+## Architecture Overview
+
+### Backend
+- Express API
+- MVC-inspired structure
+- JWT authentication
+- Pepper rotation hashing
+
+### Frontend
+- Component-driven structure
+- Axios instance abstraction
+- Protected routes
+
+---
+
+
 ## License & Author
 **Author:** Omoju Oluwamayowa (Nox)
 

@@ -23,7 +23,9 @@
     "nodemailer": "^7.0.9"
   },
   "devDependencies": {
-    "concurrently": "^9.2.1"
+    "concurrently": "^9.2.1",
+    "eslint": "^10.0.2",
+    "prettier": "^3.8.1"
   },
   "description": "A small blog project utilizing multiple password hashing and JWT toke for security and authentication, using MERN stack — MongoDB, Express, ReactJS, NodeJS for frontend and backend with a noSQL server. It also features pre-password hashing with SHA-256, hashing the prehashed password with argon, capturing IP Adresses, Limiting rates and temporarily blacklisting flagged IP Addresses, uses Secret Password Peppers and Features Password Pepper Rotation with monthly rehashing and also sends mails. The project can run offline and offline or one a server set depending on the state of both servers. It uses concurrently to run 3 servers at once and it light and fast. It allows posting with categories, thumbnails, description, title, and a variety of other features, It has a page for all authors and can also check posts based on their userId, categoryID and postID. It is still an experimental project with constant updates being added.",
   "main": "index.js",
