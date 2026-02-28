@@ -1,7 +1,7 @@
 node_modules/
 **/node_modules/
 .env
-.DS_Store
+*.DS_Store
 server/uploads/
 .git.backup/
 .git.broken.backup/
