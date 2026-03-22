@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react'
 import { useNavigate, useLocation } from 'react-router-dom'
 import API from './components/axios'
-import OtpInput from './components/otpInput'
+import OtpInput from './components/OtpInput'
 import { useSearchParams } from 'react-router-dom'
 
 import { MdMarkEmailRead } from "react-icons/md";
