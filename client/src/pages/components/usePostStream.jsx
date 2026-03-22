@@ -4,8 +4,8 @@ import { useEffect } from 'react'
 export default function usePostStream(onMessage) {
   useEffect(() => {
     const url = `${import.meta.env.VITE_API_BASE_URL}/posts/stream`
-    const es = new EventSource(url)
-
+    const es = new EventSource(url, { withCredentials: true })
+    
     es.onmessage = (e) => {
       try {
         const parsed = JSON.parse(e.data)

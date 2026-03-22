@@ -2,45 +2,35 @@ import React, { useState, useEffect } from 'react'
 import { Link, useNavigate } from 'react-router-dom'
 import API from './components/axios.js'
 
-const scrollTop = () => {
-  window.scrollTo(0, 0);
-}
+const scrollTop = () => window.scrollTo(0, 0)
 
 const Register = () => {
-  const[userData, setUserData] = useState({
-    name : '',
-    email : '',
-    password : '',
-    password2 : ''
+  const [userData, setUserData] = useState({
+    name: '', email: '', password: '', password2: ''
   })
-
-  const [error, setError] = useState('')
-  const navigate = useNavigate()
+  const [error, setError]       = useState('')
+  const [loading, setLoading]   = useState(false)
+  const navigate                = useNavigate()
 
   const changeInputHandler = (e) => {
-    setUserData(prevState => {
-      return{...prevState, [e.target.name]: e.target.value}
-    })
+    setUserData(prev => ({ ...prev, [e.target.name]: e.target.value }))
   }
 
   const registerUser = async (e) => {
     e.preventDefault()
     setError('')
+    setLoading(true)
     try {
-      console.log('Sending registration request to:', `${import.meta.env.VITE_API_BASE_URL}/users/register`)
-      console.log('User data:', userData)
-      const response = await API.post(`${import.meta.env.VITE_API_BASE_URL}/users/register`, userData)
-      const newUser = response.data
-      console.log('Registration success:', newUser)
-      if(!newUser) {
+      const response = await API.post('/users/register', userData)
+      if (!response.data) {
         setError('Registration failed. Please try again.')
       } else {
-          navigate('/login')
+        navigate('/login')
       }
     } catch (err) {
-      console.error('Registration error:', err)
-      console.error('Error response:', err.response)
       setError(err.response?.data?.message || err.message || 'An error occurred')
+    } finally {
+      setLoading(false)
     }
   }
 
@@ -50,11 +40,19 @@ const Register = () => {
         <h2>Sign Up</h2>
         <form className="form register__form" onSubmit={registerUser}>
           {error && <p className="form__error-message">{error}</p>}
-          <input type="text" placeholder='Full Name' name='name' value={userData.name} onChange={changeInputHandler} autoFocus/>
-          <input type="email" placeholder='Email' name='email' value={userData.email} onChange={changeInputHandler} />
-          <input type="password" placeholder='Password' name='password' value={userData.password} onChange={changeInputHandler} />
-          <input type="password" placeholder='Confirm Password' name='password2' value={userData.password2} onChange={changeInputHandler} />
-          <button type="submit" className='btn primary' onClick={scrollTop}>Register</button>
+          <input type="text" placeholder='Full Name' name='name'
+            value={userData.name} onChange={changeInputHandler} autoFocus disabled={loading} />
+          <input type="email" placeholder='Email' name='email'
+            value={userData.email} onChange={changeInputHandler} disabled={loading} />
+          <input type="password" placeholder='Password' name='password'
+            value={userData.password} onChange={changeInputHandler} disabled={loading} />
+          <input type="password" placeholder='Confirm Password' name='password2'
+            value={userData.password2} onChange={changeInputHandler} disabled={loading} />
+          <button type="submit" className='btn primary' disabled={loading} onClick={scrollTop}
+            style={{ opacity: loading ? 0.75 : 1, transition: 'opacity 0.2s ease' }}
+          >
+            {loading ? 'Creating account...' : 'Register'}
+          </button>
         </form>
         <small>Already have an account? <Link to="/login" onClick={scrollTop}>Sign In</Link></small>
       </div>

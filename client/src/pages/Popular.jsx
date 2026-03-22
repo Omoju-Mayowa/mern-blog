@@ -13,7 +13,7 @@ const Popular = () => {
     const fetchPosts = async () => {
       setIsLoading(true)
       try {
-        const response = await API.get(`${import.meta.env.VITE_API_BASE_URL}/posts`)
+        const response = await API.get(`/posts`)
         const data = Array.isArray(response.data) ? response.data : []
         // Sort by likesCount descending; missing likesCount treated as 0
         data.sort((a, b) => (b.likesCount || 0) - (a.likesCount || 0))

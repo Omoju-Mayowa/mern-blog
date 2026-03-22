@@ -1,67 +1,75 @@
-import React, { useEffect, useRef, useState } from "react";
-import { Outlet, useLocation } from "react-router-dom";
-import Lenis from "lenis";
-import { AnimatePresence, motion } from "motion/react";
-import NavBar from "./NavBar";
-import Footer from "./Footer";
-import CursorManager from "./CursorManager";
+import React, { useEffect, useRef } from "react"
+import { Outlet, useLocation } from "react-router-dom"
+import Lenis from "lenis"
+import { AnimatePresence, motion } from "motion/react"
+import NavBar from "./NavBar"
+import Footer from "./Footer"
+import CursorManager from "./CursorManager"
+
+const isPostDetail = (pathname) =>
+  /^\/posts\/[^/]+$/.test(pathname) &&
+  !pathname.includes('/edit') &&
+  !pathname.includes('/delete')
 
 const Layout = () => {
-  const location = useLocation();
-  const footerRef = useRef(null);
+  const location = useLocation()
+  const footerRef = useRef(null)
+  const lenisRef = useRef(null)
+  const onPostDetail = isPostDetail(location.pathname)
 
-  // --- Smooth scrolling (Lenis)
-  const lenisRef = useRef(null);
-  
   useEffect(() => {
-    const lenis = new Lenis({
-      duration: 2,
-      smoothWheel: true,
+    const lenis = new Lenis({ 
+      duration: 2, 
+      smoothWheel: true, 
       smoothTouch: false,
-    });
-    
-    lenisRef.current = lenis;
+    })
+    lenisRef.current = lenis
+    const raf = (time) => { lenis.raf(time); requestAnimationFrame(raf) }
+    requestAnimationFrame(raf)
+    return () => lenis.destroy()
+  }, [])
 
-    const raf = (time) => {
-      lenis.raf(time);
-      requestAnimationFrame(raf);
-    };
-    requestAnimationFrame(raf);
-
-    return () => lenis.destroy();
-  }, []);
-
-  // Scroll to top on route change (works with Lenis)
   useEffect(() => {
-    if (lenisRef.current) {
-      lenisRef.current.scrollTo(0, { immediate: true });
-    }
-    // Also use standard scroll as fallback
-    window.scrollTo({ top: 0, left: 0, behavior: 'instant' });
-    document.documentElement.scrollTop = 0;
-    document.body.scrollTop = 0;
-  }, [location.pathname]);
+    if (lenisRef.current) lenisRef.current.scrollTo(0, { immediate: true })
+    window.scrollTo({ top: 0, left: 0, behavior: 'instant' })
+    document.documentElement.scrollTop = 0
+    document.body.scrollTop = 0
+  }, [location.pathname])
 
   return (
     <div className="app">
       <CursorManager />
+      {!onPostDetail && <NavBar />}
 
-      {/* MAIN APP CONTENT */}
-      <NavBar />
-      <motion.main
-        className="main-content"
-        key={location.pathname}
-        initial={{ y: 20, opacity: 0 }}
-        animate={{ y: 0, opacity: 1 }}
-        transition={{ duration: 1 }}
-      >
-        <Outlet />
-      </motion.main>
-      <footer ref={footerRef} className="animated-footer">
-        <Footer />
-      </footer>
+      <AnimatePresence mode="wait" initial={false}>
+        {onPostDetail ? (
+          <main
+            key={location.pathname}
+            className="main-content main-content--detail"
+          >
+            <Outlet />
+          </main>
+        ) : (
+          <motion.main
+            key={location.pathname}
+            className="main-content"
+            initial={{ opacity: 0, y: 16 }}
+            animate={{ opacity: 1, y: 0 }}
+            exit={{ opacity: 0, y: -8 }}
+            transition={{ duration: 0.3, ease: "easeOut" }}
+          >
+            <Outlet />
+          </motion.main>
+        )}
+      </AnimatePresence>
+
+      {!onPostDetail && (
+        <div ref={footerRef} className="animated-footer">
+          <Footer />
+        </div>
+      )}
     </div>
-  );
-};
+  )
+}
 
-export default Layout;
+export default Layout

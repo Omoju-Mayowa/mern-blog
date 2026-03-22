@@ -16,7 +16,7 @@ const CategoryPosts = () => {
     const fetchPosts = async () => {
       setIsLoading(true)
       try {
-        const response = await API.get(`${import.meta.env.VITE_API_BASE_URL}/posts/categories/${category}`)
+        const response = await API.get(`/posts/categories/${category}`)
         setPosts(response?.data || [])
       } catch (err) {
         console.log(err)

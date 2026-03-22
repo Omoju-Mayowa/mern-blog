@@ -21,9 +21,9 @@ const ForgotPassword = () => {
     e.preventDefault()
     setError('')
     try {
-      const response = await API.post(`${import.meta.env.VITE_API_BASE_URL}/users/forgot-password`, userData)
+      const response = await API.post(`/users/forgot-password`, userData)
       // OTP request succeeded; do not set currentUser here (we only requested an OTP)
-      navigate('/changePassword')
+      navigate('/otp', { state: { email: userData.email } })
     } catch (err) {
       setError(err.response?.data?.message || err.message || 'An error occurred')
     }

@@ -14,7 +14,7 @@ const scrollTop = () => {
 
 // Logic mirrored from PostItem for consistent image handling
 const resolveMediaUrl = (path, folder = 'mern') => {
-  const assetsBase = import.meta.env.VITE_API_ASSETS_URL || 'https://pub-ec6d8fbb35c24f83a77c02047b5c8f13.r2.dev';
+  const assetsBase = import.meta.env.VITE_API_ASSETS_URL;
   if (!path || path.includes('placeholder')) {
       return `${assetsBase}/${folder}/post-placeholder.png`;
   }

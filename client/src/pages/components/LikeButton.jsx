@@ -41,7 +41,7 @@ const LikeButton = ({ postID, initialLikesCount = 0, initialLikedBy = [] }) => {
 
     try {
       const res = await API.post(
-        `${import.meta.env.VITE_API_BASE_URL}/posts/${postID}/like`,
+        `/posts/${postID}/like`,
         {},
         { headers: { Authorization: `Bearer ${currentUser.token}` } }
       )

@@ -13,12 +13,12 @@ const Posts = () => {
     const fetchPosts = async () => {
       setIsLoading(true)
       try {
-        const response = await API.get(`${import.meta.env.VITE_API_BASE_URL}/posts`)
+        const response = await API.get(`/posts`)
         setPosts(Array.isArray(response.data) ? response.data : [])
         console.log({["Fetched Post Data: "]: response.data})
       } catch (err) {
         // show helpful debug information
-        console.error('Failed fetching posts:', err.response?.status, err.response?.data || err.message, 'url:', `${import.meta.env.VITE_API_BASE_URL}/posts`)
+        console.error('Failed fetching posts:', err.response?.status, err.response?.data || err.message, 'url:', `/posts`)
       }
 
       setIsLoading(false)

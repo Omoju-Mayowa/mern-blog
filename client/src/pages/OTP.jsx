@@ -1,29 +1,47 @@
-import React, { useState } from 'react'
-import { Link } from 'react-router-dom'
+import React, { useEffect, useState } from 'react'
+import { useNavigate, useLocation } from 'react-router-dom'
+import API from './components/axios'
+import OtpInput from './components/otpInput'
+import { useSearchParams } from 'react-router-dom'
 
-const scrollTop = () => {
-  window.scrollTo(0, 0);
-}
+import { MdMarkEmailRead } from "react-icons/md";
 
 const OTP = () => {
-  const[userData, setUserData] = useState({
-    otp: ''
-  })
+  const [searchParams] = useSearchParams()
+  const codeFromEmail = searchParams.get('code')
+  const [otp, setOtp] = useState(codeFromEmail || '')
+  const [error, setError] = useState('')
+  const navigate = useNavigate()
+  const { state } = useLocation()
 
-  const changeInputHandler = (e) => {
-    setUserData(prevState => {
-      return{...prevState, [e.target.name]: e.target.value}
-    })
+  const submitOTP = async (e) => {
+    if (e?.preventDefault) e.preventDefault()
+    setError('')
+    const otpToSubmit = otp || codeFromEmail
+    console.log('Submitting OTP:', otpToSubmit)
+    try {
+      await API.post('/users/verify-otp', { otp: otpToSubmit })
+      navigate('/changePassword', { state: { otp: otpToSubmit } })
+    } catch (err) {
+      setError(err.response?.data?.message || err.message || 'An error occurred')
+    }
   }
+
+  useEffect(() => {
+    if (codeFromEmail && codeFromEmail.length === 6) {
+      submitOTP()
+    }
+  }, [codeFromEmail])
 
   return (
     <section className="register">
       <div className="container">
-        <h2>Sign Up</h2>
-        <form className="form login__form">
-          <p className="form__error-message">This is an error message</p>
-          <input type="text" placeholder='Enter You Otp Code' name='otp' value={userData.otp} onChange={changeInputHandler} />
-          <button type="submit" className='btn primary' onClick={scrollTop}>Submit OTP</button>
+        <h2>Enter OTP</h2>
+        <p className='form__success-message'><MdMarkEmailRead /> We sent a code to {state?.email}</p>
+        <form className="form login__form" onSubmit={submitOTP}>
+          {error && <p className="form__error-message">{error}</p>}
+          <OtpInput length={6} onChange={setOtp} />
+          <button type="submit" className='btn primary'>Verify OTP</button>
         </form>
       </div>
     </section>

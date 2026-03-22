@@ -17,7 +17,7 @@ const PostAuthor = ({ authorID, createdAt }) => {
   // FIX: Ensure we have a string ID. If authorID is an object (populated), use ._id
   const validAuthorID = typeof authorID === 'object' ? authorID?._id : authorID;
 
-  const assetsBase = import.meta.env.VITE_API_ASSETS_URL || 'https://pub-ec6d8fbb35c24f83a77c02047b5c8f13.r2.dev';
+  const assetsBase = import.meta.env.VITE_API_ASSETS_URL;
 
   useEffect(() => {
     const getAuthor = async () => {
@@ -32,7 +32,7 @@ const PostAuthor = ({ authorID, createdAt }) => {
       }
 
       try {
-        const response = await API.get(`${import.meta.env.VITE_API_BASE_URL}/users/${validAuthorID}`);
+        const response = await API.get(`/users/${validAuthorID}`);
         setAuthor(response?.data);
       } catch (error) {
         console.warn("Failed to fetch author:", error);

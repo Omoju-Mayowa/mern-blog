@@ -22,7 +22,6 @@ const CreatePost = () => {
   
   const navigate = useNavigate()
   const { currentUser } = useContext(UserContext)
-  const token = currentUser?.token
 
   const TITLE_LIMIT = 12000
   const DESCRIPTION_LIMIT = 50000
@@ -34,8 +33,8 @@ const CreatePost = () => {
 
   // Redirect if not logged in
   useEffect(() => {
-    if (!token) navigate('/login')
-  }, [token, navigate])
+    if (!currentUser) navigate('/login')
+  }, [currentUser, navigate])
 
   // Fetch existing categories for suggestions
   useEffect(() => {
@@ -90,9 +89,7 @@ const CreatePost = () => {
       const catExists = categories.some(c => c.name.toLowerCase() === categoryInput.toLowerCase())
       if (!catExists) {
         try {
-          await API.post('/categories', { name: categoryInput }, {
-            headers: { Authorization: `Bearer ${token}` }
-          })
+          await API.post('/categories', { name: categoryInput })
         } catch (catErr) {
           // Ignore if 409 (already exists)
           if (catErr.response?.status !== 409) console.warn('Cat error:', catErr)
@@ -109,10 +106,7 @@ const CreatePost = () => {
 
       // 3. Submit Post
       const res = await API.post('/posts', form, {
-        headers: { 
-          'Content-Type': 'multipart/form-data',
-          Authorization: `Bearer ${token}` 
-        }
+        headers: { 'Content-Type': 'multipart/form-data' }
       })
       
       navigate(`/posts/${res.data._id || res.data.id}`)

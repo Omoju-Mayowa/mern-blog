@@ -13,7 +13,7 @@ const Footer = () => {
     // Fetch categories from API
     const fetchCategories = async () => {
       try {
-        const response = await API.get(`${import.meta.env.VITE_API_BASE_URL}/categories`)
+        const response = await API.get(`/categories`)
         // Ensure response.data is an array
         const categoriesData = Array.isArray(response.data) ? response.data : []
         // Get up to 20 random categories

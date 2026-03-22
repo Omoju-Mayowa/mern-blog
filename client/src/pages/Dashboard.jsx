@@ -7,7 +7,7 @@ import DeletePost from './DeletePost'
 
 // Smart Resolver for Dashboard Media (Consistency with PostItem)
 const resolveMediaUrl = (path, folder = 'mern') => {
-  const assetsBase = import.meta.env.VITE_API_ASSETS_URL || 'https://pub-ec6d8fbb35c24f83a77c02047b5c8f13.r2.dev';
+  const assetsBase = import.meta.env.VITE_API_ASSETS_URL;
   if (!path || path.includes('placeholder')) {
       return `${assetsBase}/${folder}/post-placeholder.png`;
   }
@@ -70,7 +70,7 @@ const Dashboard = () => {
                        alt={post.title} 
                      />
                   </div>
-                  <h5>{post.title}</h5>
+                  <h5>{post.title.length > 100 ? post.title.slice(0, 100) + '...' : post.title}</h5>
                 </div>
                 <div className="dashboard__post-actions">
                   <Link to={`/posts/${post._id}`} className="btn sm">View</Link>
