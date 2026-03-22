@@ -104,11 +104,15 @@ export const registerUser = async (req, res, next) => {
             pepperVersion: version
         });
       
-        await sendEmail(
-          newUser.email,
-          'Welcome to Mern Blog 👋',
-          welcomeTemplate(newUser.name)
-        )
+        try {
+          await sendEmail(
+            newUser.email,
+            'Welcome to Mern Blog 👋',
+            welcomeTemplate(newUser.name)
+          )
+        } catch (err) {
+          console.log("Email failed to send.", err)
+        }
         
         res.status(201).json({ message: "Registered", id: newUser._id });
     } catch (error) {
