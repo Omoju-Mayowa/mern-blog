@@ -18,7 +18,7 @@ import AuthorPosts from "./pages/AuthorPosts";
 import Dashboard from "./pages/Dashboard";
 import Logout from "./pages/Logout";
 import PostDetail from "./pages/PostDetail";
-import OTP from "./pages/otp";
+import OTP from "./pages/OTP";
 import ForgotPassword from "./pages/forgotPassword";
 import ChangePassword from "./pages/changePassword";
 import UserProvider from "./pages/components/context/userContext";
