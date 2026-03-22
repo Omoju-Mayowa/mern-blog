@@ -41,7 +41,7 @@ const Login = () => {
     <section className="login">
       <div className="container">
         <h2>Sign In</h2>
-        {state?.email && <p className='form__success-message'><LuUserRoundCheck /> {state?.email} has been successfully registered.</p>}
+        {state?.email && <p className='form__success-message'><LuUserRoundCheck />    {state?.email} has been successfully registered.</p>}
         <form className="form login__form" onSubmit={loginUser}>
           {isExpired && <p className="form__error-message">Session expired. Please log in again.</p>}
           {error && <p className="form__error-message">{error}</p>}
