@@ -7,54 +7,35 @@ import PostItem from './components/PostItem'
 import usePostStream from './components/usePostStream'
 import Loader from './components/Loader'
 
+const scrollTop = () => window.scrollTo(0, 0)
 
-const scrollTop = () => {
-  window.scrollTo(0, 0);
+const resolveMediaUrl = (path, folder = 'mern') => {
+  const assetsBase = import.meta.env.VITE_API_ASSETS_URL
+  if (!path || path.includes('placeholder'))
+    return `${assetsBase}/${folder}/post-placeholder.png`
+  if (path.startsWith('http')) return path
+  const cleanPath = path.startsWith(`${folder}/`) ? path : `${folder}/${path}`
+  return `${assetsBase}/${cleanPath}`
 }
 
-// Logic mirrored from PostItem for consistent image handling
-const resolveMediaUrl = (path, folder = 'mern') => {
-  const assetsBase = import.meta.env.VITE_API_ASSETS_URL;
-  if (!path || path.includes('placeholder')) {
-      return `${assetsBase}/${folder}/post-placeholder.png`;
-  }
-  if (path.startsWith('http')) return path;
-  
-  // Check if prefix folder is already present in the path
-  const cleanPath = path.startsWith(`${folder}/`) ? path : `${folder}/${path}`;
-  return `${assetsBase}/${cleanPath}`;
-};
-
 const UserProfile = () => {
-  const { id } = useParams()
-  const [userData, setUserData] = useState(null)
-  const [loading, setLoading] = useState(true)
-  const [error, setError] = useState('')
-  const [isEditing, setIsEditing] = useState(false)
-  const [formData, setFormData] = useState({
-    name: '',
-    email: '',
-    currentPassword: '',
-    newPassword: '',
-    confirmNewPassword: ''
-  })
-  const [avatar, setAvatar] = useState(null)
-  const [avatarFile, setAvatarFile] = useState(null)
+  const { id }                                      = useParams()
+  const [userData, setUserData]                     = useState(null)
+  const [loading, setLoading]                       = useState(true)
+  const [error, setError]                           = useState('')
+  const [isEditing, setIsEditing]                   = useState(false)
+  const [isLoading, setIsLoading]                   = useState(false)
   const [isChangingPassword, setIsChangingPassword] = useState(false)
+  const [avatar, setAvatar]                         = useState(null)
+  const [avatarFile, setAvatarFile]                 = useState(null)
+  const [formData, setFormData]                     = useState({
+    name: '', email: '',
+    currentPassword: '', newPassword: '', confirmNewPassword: ''
+  })
 
-  const [isLoading, setIsLoading] = useState(false)
-
-
-  const navigate = useNavigate()
   const { currentUser } = useContext(UserContext)
-  const token = currentUser?.token
-  const isOwnProfile = currentUser?.id === id
+  const isOwnProfile    = currentUser?.id === id
 
-  // Assets Base URL calculation (Railway URL)
-  const baseUrl = import.meta.env.VITE_API_ASSETS_URL || ''
-  const assetsBase = baseUrl.replace('/api', '')
-
-  // Fetch user data on mount
   useEffect(() => {
     const fetchUserData = async () => {
       try {
@@ -62,16 +43,13 @@ const UserProfile = () => {
         const response = await API.get(`/users/${id}`)
         setUserData(response.data)
         setFormData({
-          name: response.data.name || '',
-          email: response.data.email || '',
-          currentPassword: '',
-          newPassword: '',
+          name:             response.data.name  || '',
+          email:            response.data.email || '',
+          currentPassword:  '',
+          newPassword:      '',
           confirmNewPassword: ''
         })
-        
-        // Use resolveMediaUrl for initial avatar load
-        setAvatar(resolveMediaUrl(response.data.avatar));
-        
+        setAvatar(resolveMediaUrl(response.data.avatar))
         setError('')
       } catch (err) {
         console.error('Error fetching user:', err)
@@ -83,18 +61,15 @@ const UserProfile = () => {
     fetchUserData()
   }, [id])
 
-  // Real-time updates via SSE
   usePostStream((event, payload) => {
     if (event === 'profile_updated' && String(payload._id) === String(id)) {
       setUserData(payload)
       setFormData(prev => ({
         ...prev,
-        name: payload.name || prev.name,
+        name:  payload.name  || prev.name,
         email: payload.email || prev.email
       }))
-      if (payload.avatar) {
-        setAvatar(resolveMediaUrl(payload.avatar))
-      }
+      if (payload.avatar) setAvatar(resolveMediaUrl(payload.avatar))
     }
   })
 
@@ -115,59 +90,64 @@ const UserProfile = () => {
 
   const handleSaveProfile = async (e) => {
     e.preventDefault()
-    if (!isOwnProfile || !token) return setError('Unauthorized')
+    if (!isOwnProfile) return setError('Unauthorized')
 
     setIsLoading(true)
+    setError('')
 
     try {
-      setError('')
-      
-      // 1. Handle Password Change if requested
+      // 1. Handle password change if requested
       if (isChangingPassword && formData.newPassword) {
-        if (!formData.currentPassword) return setError('Current password required')
-        if (formData.newPassword !== formData.confirmNewPassword) return setError('Passwords mismatch')
-        
-        await API.patch(`/users/edit-user`, formData, {
-          headers: { Authorization: `Bearer ${token}` }
+        if (!formData.currentPassword) {
+          setError('Current password required')
+          setIsLoading(false)
+          return
+        }
+        if (formData.newPassword !== formData.confirmNewPassword) {
+          setError('Passwords do not match')
+          setIsLoading(false)
+          return
+        }
+        await API.patch('/users/edit-user', {
+          currentPassword:    formData.currentPassword,
+          newPassword:        formData.newPassword,
+          confirmNewPassword: formData.confirmNewPassword,
         })
       }
 
-      // 2. Handle Profile (Name, Email, Avatar)
+      // 2. Handle profile update (name, email, avatar)
       const formDataToSend = new FormData()
       formDataToSend.append('name', formData.name)
       formDataToSend.append('email', formData.email)
       if (avatarFile) formDataToSend.append('avatar', avatarFile)
 
-      const response = await API.patch(`/users/${id}`, formDataToSend, {
-        headers: {
-          Authorization: `Bearer ${token}`,
-          'Content-Type': 'multipart/form-data'
-        }
-      })
-      
+      const response = await API.patch(`/users/${id}`, formDataToSend)
+
       setUserData(response.data)
-      if (response.data.avatar) {
-        setAvatar(resolveMediaUrl(response.data.avatar))
-      }
+      if (response.data.avatar) setAvatar(resolveMediaUrl(response.data.avatar))
 
       setIsEditing(false)
       setIsChangingPassword(false)
-      alert("Profile updated successfully")
+      setAvatarFile(null)
     } catch (err) {
       setError(err.response?.data?.message || 'Update failed')
     } finally {
-        setIsLoading(false)
+      setIsLoading(false)
     }
   }
 
-  if (loading) return <section className="profile"><Loader /></section>
-  if (!userData) return <section className="profile"><div className="center"><p className='form__error-message'>User not found.</p></div></section>
+  if (loading)    return <section className="profile"><Loader /></section>
+  if (!userData)  return (
+    <section className="profile">
+      <div className="center"><p className="form__error-message">User not found.</p></div>
+    </section>
+  )
 
   return (
     <section className="profile">
       <div className="container profile__container">
         {isOwnProfile && (
-          <Link to={`/dashboard`} onClick={scrollTop} className="btn">My Posts</Link>
+          <Link to="/dashboard" onClick={scrollTop} className="btn">My Posts</Link>
         )}
 
         <div className="profile__details">
@@ -177,7 +157,8 @@ const UserProfile = () => {
             </div>
             {isEditing && (
               <form className="avatar__form">
-                <input type="file" name="avatar" id="avatar" accept='image/*' onChange={handleAvatarChange} />
+                <input type="file" name="avatar" id="avatar"
+                  accept="image/*" onChange={handleAvatarChange} />
                 <label htmlFor="avatar"><FaEdit /></label>
               </form>
             )}
@@ -190,27 +171,40 @@ const UserProfile = () => {
 
           {isEditing ? (
             <form className="form profile__form" onSubmit={handleSaveProfile}>
-              <input type="text" name="name" placeholder='Full Name' value={formData.name} onChange={handleInputChange} />
-              <input type="email" name="email" placeholder='Email' value={formData.email} onChange={handleInputChange} />
-              
+              <input type="text"  name="name"  placeholder="Full Name" value={formData.name}  onChange={handleInputChange} />
+              <input type="email" name="email" placeholder="Email"     value={formData.email} onChange={handleInputChange} />
+
               {!isChangingPassword ? (
-                <button type="button" className='btn' onClick={() => setIsChangingPassword(true)}>Change Password</button>
+                <button type="button" className="btn"
+                  onClick={() => setIsChangingPassword(true)}>
+                  Change Password
+                </button>
               ) : (
                 <>
-                  <input type="password" name="currentPassword" placeholder='Current Password' value={formData.currentPassword} onChange={handleInputChange} />
-                  <input type="password" name="newPassword" placeholder='New Password' value={formData.newPassword} onChange={handleInputChange} />
-                  <input type="password" name="confirmNewPassword" placeholder='Confirm New Password' value={formData.confirmNewPassword} onChange={handleInputChange} />
-                  <button type="button" className='btn' onClick={() => setIsChangingPassword(false)}>Cancel Password Change</button>
+                  <input type="password" name="currentPassword"    placeholder="Current Password"     value={formData.currentPassword}    onChange={handleInputChange} />
+                  <input type="password" name="newPassword"        placeholder="New Password"         value={formData.newPassword}        onChange={handleInputChange} />
+                  <input type="password" name="confirmNewPassword" placeholder="Confirm New Password" value={formData.confirmNewPassword} onChange={handleInputChange} />
+                  <button type="button" className="btn"
+                    onClick={() => setIsChangingPassword(false)}>
+                    Cancel Password Change
+                  </button>
                 </>
               )}
-              
-              <button type="submit" className='btn primary'>
+
+              <button type="submit" className="btn primary" disabled={isLoading}>
                 {isLoading ? 'Saving...' : 'Save Changes'}
               </button>
-              <button type="button" className='btn' onClick={() => setIsEditing(false)}>Cancel</button>
+              <button type="button" className="btn"
+                onClick={() => { setIsEditing(false); setIsChangingPassword(false); setError('') }}>
+                Cancel
+              </button>
             </form>
           ) : (
-            isOwnProfile && <button className='btn primary' onClick={() => setIsEditing(true)}><FaEdit /> Edit Profile</button>
+            isOwnProfile && (
+              <button className="btn primary" onClick={() => setIsEditing(true)}>
+                <FaEdit /> Edit Profile
+              </button>
+            )
           )}
 
           <div className="profile__stats">
@@ -220,7 +214,7 @@ const UserProfile = () => {
             </div>
           </div>
         </div>
-        
+
         <UserPosts userId={id} />
       </div>
     </section>
@@ -228,7 +222,7 @@ const UserProfile = () => {
 }
 
 const UserPosts = ({ userId }) => {
-  const [posts, setPosts] = useState([])
+  const [posts, setPosts]   = useState([])
   const [loading, setLoading] = useState(true)
 
   useEffect(() => {
@@ -236,16 +230,13 @@ const UserPosts = ({ userId }) => {
       try {
         const response = await API.get(`/posts/users/${userId}`)
         setPosts(Array.isArray(response.data) ? response.data : [])
-      } catch (err) {
-        setPosts([])
-      } finally {
-        setLoading(false)
-      }
+      } catch { setPosts([]) }
+      finally { setLoading(false) }
     }
     if (userId) fetchUserPosts()
   }, [userId])
 
-  if (loading) return <div className="profile__posts"><Loader size='small' /></div>
+  if (loading) return <div className="profile__posts"><Loader size="small" /></div>
 
   return (
     <div className="profile__posts" style={{ marginTop: '3rem' }}>
