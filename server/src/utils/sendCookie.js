@@ -1,6 +1,7 @@
 import jwt from 'jsonwebtoken'
 
 const sendCookie = (res, statusCode, user) => {
+  const isProduction = process.env.NODE_ENV === 'production'
 
   const accessToken = jwt.sign(
     { id: user.id, name: user.name },
