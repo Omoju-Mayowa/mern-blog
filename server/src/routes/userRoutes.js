@@ -10,7 +10,7 @@ import { loginRateLimiter } from '../middleware/loginRateLimiter.js'
 const router = Router()
 
 // Public
-router.post('/register', registerUser)
+router.post('/register', loginRateLimiter, registerUser)
 router.post('/login', loginRateLimiter, loginUser)
 router.post('/verify-otp', verifyOTP)
 router.post('/forgot-password', sendResetOTP)

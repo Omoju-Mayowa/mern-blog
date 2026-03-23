@@ -4,7 +4,7 @@ import mongoose from "mongoose";
 import "dotenv/config";
 import fileUpload from "express-fileupload";
 import helmet from "helmet";
-import { default as rateLimit } from "express-rate-limit";
+import rateLimit from "express-rate-limit";
 import cookieParser from "cookie-parser";
 import mongoSanitize from "express-mongo-sanitize";
 import xssClean from "xss-clean";
@@ -16,6 +16,15 @@ import postRoutes from "./src/routes/postRoutes.js";
 import categoryRoutes from "./src/routes/categoryRoutes.js";
 import uploadRouter from "./src/routes/upload.js"; // R2 upload route
 import { notFound, errorHandler } from "./src/middleware/errorMiddleware.js";
+
+
+const globalLimiter = rateLimit({
+  windowMs: 15 * 60 * 1000,
+  max: 100,
+  standardHeaders: true,
+  legacyHeaders: false,
+  message: { message: "Too many requests, slow down." }
+})
 
 // ────────────────────────────────────────────────────────────
 // ⚙️ Express setup
