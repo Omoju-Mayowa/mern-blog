@@ -32,17 +32,6 @@ const globalLimiter = rateLimit({
 
 export const app = express();
 
-console.log(process.env.NODE_ENV)
-
-app.set("trust proxy", 1);
-app.use(express.json({ extended: true }));
-app.use(express.urlencoded({ extended: true }));
-app.use(globalLimiter)
-app.use(cookieParser())
-
-app.use(mongoSanitize())
-app.use(xssClean())
-
 const normalize = (s="") => s.trim().replace(/\/$/, "")
 const allowedOrigins = (process.env.SITE_LINK || "")
   .split(',')
@@ -58,6 +47,20 @@ app.use(cors({
   credentials: true,
   methods: ["GET", "POST", "PATCH", "DELETE"]
 }));
+
+
+
+console.log(process.env.NODE_ENV)
+
+
+app.set("trust proxy", 1);
+app.use(express.json({ extended: true }));
+app.use(express.urlencoded({ extended: true }));
+app.use(cookieParser())
+
+app.use(globalLimiter)
+app.use(mongoSanitize())
+app.use(xssClean())
 
 // Allow Authorization header in CORS preflight
 app.use((req, res, next) => {
