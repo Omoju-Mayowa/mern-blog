@@ -305,7 +305,6 @@ export const refreshToken = async (req, res, next) => {
     let decoded
     try {
       decoded = jwt.verify(token, process.env.REFRESH_TOKEN_SECRET)
-      console.log('decoded.id:', JSON.stringify(decoded))
     } catch (err) {
       if (err.name === 'TokenExpiredError') {
         return res.status(401).json({ message: 'Refresh token expired. Please log in again.' })
@@ -314,7 +313,6 @@ export const refreshToken = async (req, res, next) => {
     }
 
     const user = await User.findById(decoded.id || decoded._id)
-    console.log('user found:', user)
     if (!user) {
       return res.status(401).json({ message: 'User not found' })
     }

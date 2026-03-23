@@ -59,11 +59,11 @@ const EditPost = () => {
         const post = response.data
 
         // CRITICAL FIX: Extract ID string from the creator object
-        const postCreatorID = post.creator._id || post.creator.id || post.creator;
+        const postCreatorID = post.creator._id || post.creator.id || post.creator || import.meta.env.ADMIN;
         const currentUserID = currentUser?.id;
 
         // Security check: Match string to string
-        if (currentUserID?.toString() !== postCreatorID?.toString() || currentUser.toString() === import.meta.env.ADMIN) {
+        if (currentUserID?.toString() !== postCreatorID?.toString() && currentUserID?.toString() !== import.meta.env.ADMIN) {
           console.error("Access Denied: ID mismatch")
           navigate('/')
           return
