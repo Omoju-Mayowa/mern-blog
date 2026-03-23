@@ -11,12 +11,14 @@ const OTP = () => {
   const codeFromEmail = searchParams.get('code')
   const [otp, setOtp] = useState(codeFromEmail || '')
   const [error, setError] = useState('')
+  const [verifying, setVerifying]   = useState(false)
   const navigate = useNavigate()
   const { state } = useLocation()
 
   const submitOTP = async (e) => {
     if (e?.preventDefault) e.preventDefault()
     setError('')
+    setVerifying(true)
     const otpToSubmit = otp || codeFromEmail
     console.log('Submitting OTP:', otpToSubmit)
     try {
@@ -24,6 +26,8 @@ const OTP = () => {
       navigate('/changePassword', { state: { otp: otpToSubmit } })
     } catch (err) {
       setError(err.response?.data?.message || err.message || 'An error occurred')
+    } finally {
+      setVerifying(false)
     }
   }
 
@@ -41,7 +45,10 @@ const OTP = () => {
         <form className="form login__form" onSubmit={submitOTP}>
           {error && <p className="form__error-message">{error}</p>}
           <OtpInput length={6} onChange={setOtp} />
-          <button type="submit" className='btn primary'>Verify OTP</button>
+          <button type="submit" className='btn primary' disabled={verifying}
+            style={{ opacity: verifying ? 0.75 : 1, transition: 'opacity 0.2s ease' }}>
+            { verifying ? 'Verifying...' : 'Verify  OTP' }
+          </button>
         </form>
       </div>
     </section>
