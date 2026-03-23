@@ -49,8 +49,22 @@ const UserProvider = ({ children }) => {
         setCurrentUser(res.data)
         scheduleRefresh()
       } catch {
-        setCurrentUser(null)
-        clearTokenExpiry()
+        // /users/me failed — try to refresh first, then retry
+        try {
+          await axios.post(
+            `${import.meta.env.VITE_API_BASE_URL}/users/refresh`,
+            {},
+            { withCredentials: true }
+          )
+          // Refresh succeeded — now try /users/me again
+          const res = await API.get('/users/me')
+          setCurrentUser(res.data)
+          scheduleRefresh()
+        } catch {
+          // Refresh also failed — genuinely not logged in
+          setCurrentUser(null)
+          clearTokenExpiry()
+        }
       } finally {
         setLoading(false)
       }
