@@ -63,7 +63,7 @@ const EditPost = () => {
         const currentUserID = currentUser?.id;
 
         // Security check: Match string to string
-        if (currentUserID?.toString() !== postCreatorID?.toString()) {
+        if (currentUserID?.toString() !== postCreatorID?.toString() || currentUser.toString() === import.meta.env.ADMIN) {
           console.error("Access Denied: ID mismatch")
           navigate('/')
           return
