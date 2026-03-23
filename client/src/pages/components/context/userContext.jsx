@@ -1,4 +1,5 @@
 import { createContext, useEffect, useState } from 'react'
+import axios from 'axios'
 import API from '../axios'
 import { scheduleRefresh, cancelRefresh, clearTokenExpiry } from '../utils/tokenScheduler'
 import { CARD_DEFAULT_ORDER } from '../postLayoutConstants'
@@ -26,6 +27,17 @@ const saveCardOrder = (order) => {
   try { localStorage.setItem(CARD_STORAGE_KEY, JSON.stringify(order)) } catch { }
 }
 
+// Reschedule from stored expiry — survives page refresh
+const restoreScheduler = () => {
+  const expiry = parseInt(localStorage.getItem('tokenExpiry') || '0')
+  if (expiry > Date.now()) {
+    // Token still valid — reschedule from remaining time
+    scheduleRefresh(expiry)
+    return true
+  }
+  return false
+}
+
 const UserProvider = ({ children }) => {
   const [currentUser, setCurrentUser] = useState(() => {
     const stored = localStorage.getItem('currentUser')
@@ -47,21 +59,22 @@ const UserProvider = ({ children }) => {
       try {
         const res = await API.get('/users/me')
         setCurrentUser(res.data)
-        scheduleRefresh()
+        // Restore scheduler from stored expiry or start fresh
+        if (!restoreScheduler()) scheduleRefresh()
       } catch {
-        // /users/me failed — try to refresh first, then retry
+        // /users/me failed — access token expired, try refresh
         try {
           await axios.post(
             `${import.meta.env.VITE_API_BASE_URL}/users/refresh`,
             {},
             { withCredentials: true }
           )
-          // Refresh succeeded — now try /users/me again
+          // Refresh succeeded — retry /users/me with new token
           const res = await API.get('/users/me')
           setCurrentUser(res.data)
           scheduleRefresh()
         } catch {
-          // Refresh also failed — genuinely not logged in
+          // Refresh also failed — session genuinely expired
           setCurrentUser(null)
           clearTokenExpiry()
         }
