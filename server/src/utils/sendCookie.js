@@ -4,13 +4,13 @@ const sendCookie = (res, statusCode, user) => {
   const isProduction = process.env.NODE_ENV === 'production'
 
   const accessToken = jwt.sign(
-    { id: user.id, name: user.name },
+    { id: user.id, name: user.name, role: user. },
     process.env.JWT_SECRET,
     { expiresIn: '15m' }
   )
 
   const refreshToken = jwt.sign(
-    { id: user.id },
+    { id: user.id, role: user.role },
     process.env.REFRESH_TOKEN_SECRET,
     { expiresIn: '7d' }
   )
