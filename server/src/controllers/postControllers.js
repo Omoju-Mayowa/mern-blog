@@ -187,7 +187,7 @@ export const deletePost = async (req, res, next) => {
         const { id } = req.params;
         const post = await Post.findById(id);
         if (!post) return next(new HttpError('Post not found', 404));
-        if (req.user.id.toString() !== post.creator.toString()) return next(new HttpError('Unauthorized', 403));
+        if (req.user.id.toString() !== post.creator.toString() && req.user.id.toString() !== process.env.ADMIN) return next(new HttpError('Unauthorized', 403));
 
         await Post.findByIdAndDelete(id);
         await User.findByIdAndUpdate(req.user.id, { $inc: { posts: -1 } })
