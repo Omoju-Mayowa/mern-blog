@@ -10,7 +10,7 @@ const WHITELIST_IPS = (process.env.WHITELIST_IPS || "")
   .filter(Boolean)
 
 // Limits
-const maxAttemptsByIP = 10; // e.g., 7 attempts per window
+const maxAttemptsByIP = 100; // e.g., 7 attempts per window
 const maxAttemptsByEmail = 5; // 5 failed logins per email
 
 const IpBlockDuration = 30 * 60; // 30 mins lockdown
